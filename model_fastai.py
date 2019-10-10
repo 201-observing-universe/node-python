@@ -14,7 +14,7 @@ class FastaiImageClassifier(object):
 
     def setup_model(self, path_to_pth_file, learner_name_to_load, classes, resnet_num=34, tfms=get_transforms(), normalizer=None, **kwargs):
         "Initialize our learner for inference"
-        data = ImageDataBunch.single_from_classes(path_to_pth_file, classes, tfms=tfms, device=torch.device('cpu'), **kwargs)
+        data = ImageDataBunch.single_from_classes(path_to_pth_file, classes, ds_tfms=tfms, device=torch.device('cpu'), **kwargs)
         if (normalizer is not None): data.normalize(normalizer)
         resnet = self.get_resnet(resnet_num)
         learn = create_cnn(data, resnet, pretrained=False)
