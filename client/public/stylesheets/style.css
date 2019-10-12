@@ -1,5 +1,10 @@
 body {
-    background-color: #fff;
+    background-color: #FCFCFC;
+    color: #000;
+}
+
+.no-display {
+    display: none;
 }
 
 .center {
@@ -12,7 +17,6 @@ body {
 }
 
 .title {
-    font-size: 30px;
     margin-top: 1em;
     margin-bottom: 1em;
     color: #262626;
@@ -22,20 +26,17 @@ body {
     margin-top: 10em;
 }
 
-button.test-button {
-    width: 200px;
-    height: 40px;
-    border: solid 1px #4a90e2;
-    border-radius: 2px;
-    background-color: #4a90e2;
-    font-size: 14px;
-    color: #ffffff;
-}
-
 button:focus {outline:0;}
 
 .result-label {
-    margin-top: 0.5em;
-    padding: 10px;
     font-size: 13px;
+}
+
+.bottom-border-span {
+    border-bottom: 1px solid #B5000D;
+    padding-bottom: 10px;
+}
+
+.image-container {
+    margin: 30px;
 }

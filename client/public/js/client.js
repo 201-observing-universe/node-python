@@ -1,17 +1,39 @@
-var loc = window.location;
-const HOSTURL = `${loc.protocol}//${loc.hostname}:${loc.port}`;
+var loc = window.location
+const HOSTURL = `${loc.protocol}//${loc.hostname}:${loc.port}`
+const input = document.querySelector('#file-upload')
 
-function fireTest() {
-    document.getElementById('test-button').innerHTML = 'Testing...';
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', `${HOSTURL}/test`, true);
-    xhr.onerror = function() {alert (xhr.responseText);}
-    xhr.onload = function(e) {
-        if (this.readyState === 4) {
-            var response = JSON.parse(e.target.responseText);
-            document.getElementById('result-label').innerHTML = `${response['result']}`;
-        }
-        document.getElementById('test-button').innerHTML = 'Test Python';
-    }
-    xhr.send();
+function onFileSelect() {
+  const [file] = input.files
+  var reader = new FileReader()
+  reader.onload = function (e) {
+      document.getElementById('image-picked').src = e.target.result
+      document.getElementById('image-picked').className = ''
+  }
+  reader.readAsDataURL(file)
+  predict(file)
 }
+
+function convertToFormData(key, val) {
+  const body = new FormData()
+  body.append(key, val)
+  return body
+}
+
+function predict(img) {
+  document.getElementById('result-label').innerHTML = 'Loading...'
+  fetch(`${HOSTURL}/predict`, {
+    method: 'POST',
+    body: convertToFormData('img', img)
+  })
+    .then(async (response) => {
+      try {
+        const { predict } = await response.json()
+        document.getElementById('result-label').innerHTML = predict
+      } catch (e){
+        alert(e.message)
+      }
+    })
+    .catch(err => alert (err))
+}
+
+input.addEventListener('change', onFileSelect);

@@ -1,6 +1,9 @@
 const path = require('path');
+const fs = require('fs')
 const express = require('express');
 const bodyParser = require('body-parser');
+const multer = require('multer')
+const upload = multer({ dest: 'imgs/' })
 
 const PythonConnector = require('./PythonConnector.js');
 
@@ -21,34 +24,30 @@ app.use(function (req, res, next) {
 });
 
 app.get('/', function (req, res) {
-    console.log(req.url);
-    res.render('index', {title: 'Demo App'});
+    res.render('index', { title: 'Image Prediction Python/NodeJS App' });
 });
 
-app.get('/test', async function (req, res, next) {
-    console.log(req.url);
+// Our prediction endpoint (Receives an image as req.file)
+app.post('/predict', upload.single('img'), async function (req, res) {
+    const { path } = req.file
     try {
-        var pyRes = await PythonConnector.invoke('test', 'None');
-        var data = {result: pyRes}
-        res.json(data);
+        const prediction = await PythonConnector.invoke('predict_from_img', path);
+        res.json(prediction);
     }
     catch (e) {
-        console.log('error in /test', e);
-        res.send(404);
+        console.log(`error in ${req.url}`, e);
+        res.sendStatus(404);
     }
-});
 
-app.get('*', function (req, res, next) {
-    var err = new Error();
-    err.status = 404;
-    next(err);
-});
+    // delete the uploaded file (regardless whether prediction successful or not)
+    fs.unlink(path, (err) => {
+        if (err) console.error(err)
+        console.log('Cleaned up', path)
+    })
+})
 
 app.use(function (err, req, res, next) {
-    if (err.status !== 404) {
-        return next(err);
-    }
-
+    if (err.status !== 404) return next(err);
     res.status(500);
     res.render('error', { error: err });
 });

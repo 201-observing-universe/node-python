@@ -1,6 +1,6 @@
 import zerorpc
 
-from test_python import test_me
+from model_fastai import FastaiImageClassifier
 
 PORT = 4242
 
@@ -8,8 +8,9 @@ class PythonServer(object):
     def listen(self):
         print(f'Python Server started listening on {PORT} ...')
 
-    def test(self, param):
-        return test_me(param)
+    def predict_from_img(self, img_path):
+        model = FastaiImageClassifier()
+        return model.predict(img_path)
 
 try:
     s = zerorpc.Server(PythonServer())
