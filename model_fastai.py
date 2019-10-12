@@ -14,10 +14,10 @@ class FastaiImageClassifier(object):
 
     def setup_model(self, path_to_pth_file, learner_name_to_load, classes, resnet_num=34, tfms=get_transforms(), normalizer=None, **kwargs):
         "Initialize our learner for inference"
-        data = ImageDataBunch.single_from_classes(path_to_pth_file, classes, ds_tfms=tfms, device=torch.device('cpu'), **kwargs)
+        data = ImageDataBunch.single_from_classes(path_to_pth_file, classes, ds_tfms=tfms,  **kwargs)
         if (normalizer is not None): data.normalize(normalizer)
         resnet = self.get_resnet(resnet_num)
-        learn = create_cnn(data, resnet, pretrained=False)
+        learn = cnn_learner(data, resnet, pretrained=False)
         learn.load(learner_name_to_load)
         return learn
 
@@ -31,4 +31,4 @@ class FastaiImageClassifier(object):
         print('Class pred:', pred_class)
         print('Pred-idx:', pred_idx)
         print('Losses:', losses)
-        return { 'predict': pred_class }
+        return { 'predict': str(pred_class) }
